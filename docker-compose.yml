@@ -1,0 +1,14 @@
+services:
+  portfolio:
+    build: .
+    container_name: lance-shaffer-portfolio
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - portfolio-network
+
+networks:
+  portfolio-network:
+    driver: bridge
+

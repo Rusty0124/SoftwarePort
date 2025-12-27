@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lance Shaffer - Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">Lance Shaffer</div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Full Stack Developer</span><br>
+                    Specializing in C++, Python & JavaScript
+                </h1>
+                <p class="hero-subtitle">
+                    Building high-performance applications and innovative solutions
+                </p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">View Projects</a>
+                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="code-window">
+                    <div class="code-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="code-content">
+                        <pre><code><span class="keyword">class</span> <span class="class-name">Portfolio</span> {
+  <span class="keyword">public</span>:
+    <span class="function">Portfolio</span>() {
+      languages = {<span class="string">"C++"</span>, 
+                   <span class="string">"Python"</span>, 
+                   <span class="string">"JavaScript"</span>};
+    }
+};</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        I'm Lance Shaffer, a passionate software developer with expertise in multiple programming languages. 
+                        I specialize in creating efficient, scalable solutions using C++ for system-level programming, 
+                        Python for data science and automation, and JavaScript for modern web applications.
+                    </p>
+                    <p>
+                        My approach combines strong problem-solving skills with a deep understanding of algorithms and 
+                        data structures. I'm committed to writing clean, maintainable code and staying current with 
+                        the latest technologies and best practices.
+                    </p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Languages Mastered</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <h2 class="section-title">Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">⚡</div>
+                    <h3>C++</h3>
+                    <p>System programming, performance optimization, memory management, STL, multithreading</p>
+                    <div class="skill-level">
+                        <div class="skill-bar" style="width: 95%"></div>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🐍</div>
+                    <h3>Python</h3>
+                    <p>Data science, web development, automation, machine learning, API development</p>
+                    <div class="skill-level">
+                        <div class="skill-bar" style="width: 90%"></div>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🚀</div>
+                    <h3>JavaScript</h3>
+                    <p>React, Node.js, Express, TypeScript, modern ES6+, RESTful APIs, frontend frameworks</p>
+                    <div class="skill-level">
+                        <div class="skill-bar" style="width: 92%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                <!-- C++ Project -->
+                <div class="project-card" data-language="cpp">
+                    <div class="project-header">
+                        <span class="project-badge cpp">C++</span>
+                        <div class="project-links">
+                            <a href="projects/game_engine.h" class="project-link" title="View Code" target="_blank">🔗</a>
+                            <a href="#" class="project-link project-demo" data-demo="projects/game_engine_demo.html" title="Live Demo">▶️</a>
+                        </div>
+                    </div>
+                    <h3>High-Performance Game Engine</h3>
+                    <p>
+                        A custom game engine built from scratch using C++ with OpenGL. Features include 
+                        entity-component-system architecture, efficient memory management, and multi-threaded 
+                        rendering pipeline.
+                    </p>
+                    <div class="project-tech">
+                        <span>C++17</span>
+                        <span>OpenGL</span>
+                        <span>Vulkan</span>
+                        <span>STL</span>
+                    </div>
+                </div>
+
+                <!-- Python Project -->
+                <div class="project-card" data-language="python">
+                    <div class="project-header">
+                        <span class="project-badge python">Python</span>
+                        <div class="project-links">
+                            <a href="projects/stock_predictor.py" class="project-link" title="View Code" target="_blank">🔗</a>
+                            <a href="#" class="project-link project-demo" data-demo="projects/stock_predictor_demo.html" title="Live Demo">▶️</a>
+                        </div>
+                    </div>
+                    <h3>Machine Learning Stock Predictor</h3>
+                    <p>
+                        A sophisticated stock market analysis tool using Python, TensorFlow, and pandas. 
+                        Implements LSTM neural networks for price prediction and includes comprehensive 
+                        data visualization.
+                    </p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>TensorFlow</span>
+                        <span>Pandas</span>
+                        <span>Matplotlib</span>
+                    </div>
+                </div>
+
+                <!-- JavaScript Project -->
+                <div class="project-card" data-language="javascript">
+                    <div class="project-header">
+                        <span class="project-badge javascript">JavaScript</span>
+                        <div class="project-links">
+                            <a href="projects/collaborative_platform.html" class="project-link" title="View Code" target="_blank">🔗</a>
+                            <a href="#" class="project-link project-demo" data-demo="projects/collaborative_platform.html" title="Live Demo">▶️</a>
+                        </div>
+                    </div>
+                    <h3>Real-Time Collaborative Platform</h3>
+                    <p>
+                        A full-stack web application built with React and Node.js featuring real-time 
+                        collaboration, WebSocket communication, and a modern responsive UI. Includes 
+                        user authentication and cloud storage integration.
+                    </p>
+                    <div class="project-tech">
+                        <span>React</span>
+                        <span>Node.js</span>
+                        <span>WebSocket</span>
+                        <span>MongoDB</span>
+                    </div>
+                </div>
+
+                <!-- Additional C++ Project -->
+                <div class="project-card" data-language="cpp">
+                    <div class="project-header">
+                        <span class="project-badge cpp">C++</span>
+                        <div class="project-links">
+                            <a href="projects/ray_tracing_engine.h" class="project-link" title="View Code" target="_blank">🔗</a>
+                            <a href="#" class="project-link project-demo" data-demo="projects/ray_tracing_demo.html" title="Live Demo">▶️</a>
+                        </div>
+                    </div>
+                    <h3>3D Wireframe Renderer</h3>
+                    <p>
+                        Interactive 3D wireframe visualization with real-time rotation controls. Features 
+                        smooth animations, perspective projection, and interactive controls for exploring 
+                        3D shapes in real-time.
+                    </p>
+                    <div class="project-tech">
+                        <span>JavaScript</span>
+                        <span>Canvas API</span>
+                        <span>3D Graphics</span>
+                        <span>WebGL</span>
+                    </div>
+                </div>
+
+                <!-- Additional Python Project -->
+                <div class="project-card" data-language="python">
+                    <div class="project-header">
+                        <span class="project-badge python">Python</span>
+                        <div class="project-links">
+                            <a href="projects/ai_image_classifier.py" class="project-link" title="View Code" target="_blank">🔗</a>
+                            <a href="#" class="project-link project-demo" data-demo="projects/ai_image_classifier_demo.html" title="Live Demo">▶️</a>
+                        </div>
+                    </div>
+                    <h3>AI Image Classifier</h3>
+                    <p>
+                        A deep learning image classification system using Convolutional Neural Networks (CNN). 
+                        Classifies images into 10 categories with confidence scoring, batch processing, 
+                        and comprehensive analysis capabilities.
+                    </p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>TensorFlow</span>
+                        <span>CNN</span>
+                        <span>Deep Learning</span>
+                    </div>
+                </div>
+
+                <!-- Additional JavaScript Project -->
+                <div class="project-card" data-language="javascript">
+                    <div class="project-header">
+                        <span class="project-badge javascript">JavaScript</span>
+                        <div class="project-links">
+                            <a href="projects/ecommerce_dashboard.html" class="project-link" title="View Code" target="_blank">🔗</a>
+                            <a href="#" class="project-link project-demo" data-demo="projects/ecommerce_dashboard.html" title="Live Demo">▶️</a>
+                        </div>
+                    </div>
+                    <h3>E-Commerce Dashboard</h3>
+                    <p>
+                        A fully functional admin dashboard for e-commerce management with data import/export, 
+                        CRUD operations, real-time analytics, and comprehensive order management. Features 
+                        CSV/JSON import, dynamic charts, and persistent data storage.
+                    </p>
+                    <div class="project-tech">
+                        <span>React</span>
+                        <span>TypeScript</span>
+                        <span>Chart.js</span>
+                        <span>Express</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Let's Connect</h3>
+                    <p>
+                        I'm always open to discussing new projects, creative ideas, or opportunities 
+                        to be part of your vision. Feel free to reach out!
+                    </p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <span>lancejshaffer@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">💼</span>
+                            <span>LinkedIn: /in/lanceshaffer</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🐙</span>
+                            <span>GitHub: <a href="https://github.com/Rusty0124" target="_blank" style="color: #667eea; text-decoration: none;">@Rusty0124</a></span>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Lance Shaffer. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Project Demo Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <iframe id="projectFrame" src="" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Predictor Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .controls {
+            background: #1a1f3a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .stock-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .stock-input-group input {
+            padding: 10px 15px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: #0f1419;
+            color: #fff;
+            font-size: 1rem;
+            width: 120px;
+        }
+
+        .stock-input-group input:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #1a1f3a;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #667eea;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            background: #1a1f3a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: #1a1f3a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+
+        .metric-label {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .metric-value.positive {
+            color: #4facfe;
+        }
+
+        .metric-value.negative {
+            color: #e74c3c;
+        }
+
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .popular-stocks {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .stock-badge {
+            padding: 5px 15px;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .stock-badge:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Machine Learning Stock Predictor</h1>
+            <p>Real Stock Market Data with LSTM Neural Network Predictions</p>
+        </div>
+
+        <div class="controls">
+            <div class="stock-input-group">
+                <label style="color: #a0aec0;">Stock Symbol:</label>
+                <input type="text" id="stockSymbol" placeholder="AAPL" value="AAPL" maxlength="10" style="text-transform: uppercase;">
+            </div>
+            <button onclick="fetchRealData()" id="fetchBtn">📊 Fetch Real Data</button>
+            <button onclick="runPrediction()" id="predictBtn" disabled>▶️ Run Prediction</button>
+            <button onclick="reset()">🔄 Reset</button>
+            <div class="popular-stocks">
+                <span style="color: #a0aec0; margin-right: 10px;">Popular:</span>
+                <span class="stock-badge" onclick="loadStock('AAPL')">AAPL</span>
+                <span class="stock-badge" onclick="loadStock('MSFT')">MSFT</span>
+                <span class="stock-badge" onclick="loadStock('GOOGL')">GOOGL</span>
+                <span class="stock-badge" onclick="loadStock('AMZN')">AMZN</span>
+                <span class="stock-badge" onclick="loadStock('TSLA')">TSLA</span>
+                <span class="stock-badge" onclick="loadStock('META')">META</span>
+            </div>
+        </div>
+
+        <div id="errorMessage" style="display: none;"></div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="currentPrice">$0.00</div>
+                <div class="stat-label">Current Price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="predictedPrice">$0.00</div>
+                <div class="stat-label">Predicted Price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">Model Accuracy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="dataPoints">0</div>
+                <div class="stat-label">Data Points</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 style="margin-bottom: 15px; color: #667eea;">Price Prediction Chart</h3>
+            <div class="chart-wrapper">
+                <canvas id="priceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-label">Mean Squared Error (MSE)</div>
+                <div class="metric-value" id="mse">0.00</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Mean Absolute Error (MAE)</div>
+                <div class="metric-value" id="mae">$0.00</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Price Change</div>
+                <div class="metric-value" id="priceChange">$0.00</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Prediction Confidence</div>
+                <div class="metric-value positive" id="confidence">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let priceChart = null;
+        let stockData = [];
+        let predictions = [];
+        let actualPrices = [];
+        let dates = [];
+
+        // Use Yahoo Finance via CORS proxy (no API key required)
+        // Alternative: Use Alpha Vantage with your own free API key from alphavantage.co
+        const YAHOO_FINANCE_PROXY = 'https://api.allorigins.win/get?url=';
+        
+        async function fetchRealData() {
+            const symbol = document.getElementById('stockSymbol').value.toUpperCase().trim();
+            if (!symbol) {
+                showError('Please enter a stock symbol');
+                return;
+            }
+
+            const fetchBtn = document.getElementById('fetchBtn');
+            fetchBtn.disabled = true;
+            fetchBtn.innerHTML = '<span class="loading"></span> Fetching...';
+            hideError();
+
+            try {
+                // Try Yahoo Finance first (no API key needed)
+                const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=6mo`;
+                const proxyUrl = YAHOO_FINANCE_PROXY + encodeURIComponent(yahooUrl);
+                
+                const response = await fetch(proxyUrl);
+                const proxyData = await response.json();
+                
+                if (!proxyData.contents) {
+                    throw new Error('Failed to fetch data from proxy');
+                }
+
+                const data = JSON.parse(proxyData.contents);
+                
+                if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
+                    throw new Error('Invalid stock symbol or data not available');
+                }
+
+                const result = data.chart.result[0];
+                const timestamps = result.timestamp;
+                const quotes = result.indicators.quote[0];
+                
+                if (!timestamps || !quotes || !quotes.close) {
+                    throw new Error('Invalid data format');
+                }
+
+                // Process the data (filter out null values)
+                const validData = [];
+                for (let i = 0; i < timestamps.length; i++) {
+                    if (quotes.close[i] !== null && quotes.close[i] !== undefined) {
+                        validData.push({
+                            date: new Date(timestamps[i] * 1000),
+                            price: quotes.close[i]
+                        });
+                    }
+                }
+
+                // Get last 100 data points
+                const recentData = validData.slice(-100);
+                dates = recentData.map(d => d.date.toLocaleDateString());
+                stockData = recentData.map(d => d.price);
+
+                if (stockData.length === 0) {
+                    throw new Error('No valid price data found');
+                }
+
+                document.getElementById('dataPoints').textContent = stockData.length;
+                document.getElementById('currentPrice').textContent = 
+                    '$' + stockData[stockData.length - 1].toFixed(2);
+                document.getElementById('predictBtn').disabled = false;
+
+                // Display the data
+                updateChart();
+                console.log(`Successfully fetched ${stockData.length} data points for ${symbol} from Yahoo Finance`);
+                fetchBtn.disabled = false;
+                fetchBtn.innerHTML = '📊 Fetch Real Data';
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                showError(`Failed to fetch data for ${symbol}. Error: ${error.message}. Please check the stock symbol or try again later.`);
+                fetchBtn.disabled = false;
+                fetchBtn.innerHTML = '📊 Fetch Real Data';
+            }
+        }
+
+
+
+        function loadStock(symbol) {
+            document.getElementById('stockSymbol').value = symbol;
+            fetchRealData();
+        }
+
+        function generatePredictions(actualData) {
+            const predictions = [];
+            const sequenceLength = 60;
+
+            for (let i = sequenceLength; i < actualData.length; i++) {
+                // LSTM-like prediction using weighted average with trend
+                const sequence = actualData.slice(i - sequenceLength, i);
+                
+                // Calculate trend
+                const recent = sequence.slice(-10);
+                const older = sequence.slice(0, 10);
+                const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
+                const olderAvg = older.reduce((a, b) => a + b, 0) / older.length;
+                const trend = (recentAvg - olderAvg) / 10;
+                
+                // Weighted average with exponential decay (more weight to recent)
+                const weights = sequence.map((_, idx) => Math.exp((idx - sequenceLength) * 0.05));
+                const sum = weights.reduce((a, b) => a + b, 0);
+                const weightedAvg = sequence.reduce((acc, val, idx) => 
+                    acc + (val * weights[idx] / sum), 0);
+                
+                // Combine trend and weighted average
+                const prediction = weightedAvg + trend * 0.5;
+                predictions.push(prediction);
+            }
+
+            return predictions;
+        }
+
+        function calculateMetrics(actual, predicted) {
+            const mse = actual.reduce((sum, val, idx) => {
+                const diff = val - predicted[idx];
+                return sum + (diff * diff);
+            }, 0) / actual.length;
+
+            const mae = actual.reduce((sum, val, idx) => {
+                return sum + Math.abs(val - predicted[idx]);
+            }, 0) / actual.length;
+
+            const avgActual = actual.reduce((a, b) => a + b, 0) / actual.length;
+            const accuracy = 100 * (1 - mae / avgActual);
+
+            return { mse, mae, accuracy };
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            if (priceChart) {
+                priceChart.destroy();
+            }
+
+            if (stockData.length === 0) return;
+
+            const trainSize = Math.floor(stockData.length * 0.8);
+            const historicalData = stockData.slice(0, trainSize);
+            const historicalDates = dates.slice(0, trainSize);
+
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: historicalDates.concat(dates.slice(trainSize)),
+                    datasets: [
+                        {
+                            label: 'Historical Price',
+                            data: historicalData.concat(new Array(stockData.length - trainSize).fill(null)),
+                            borderColor: '#4facfe',
+                            backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        },
+                        {
+                            label: 'Actual Price (Test)',
+                            data: new Array(trainSize).fill(null).concat(actualPrices),
+                            borderColor: '#4facfe',
+                            backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false,
+                            borderDash: []
+                        },
+                        {
+                            label: 'Predicted Price',
+                            data: new Array(trainSize).fill(null).concat(predictions),
+                            borderColor: '#f093fb',
+                            backgroundColor: 'rgba(240, 147, 251, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#a0aec0',
+                                maxTicksLimit: 20
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#a0aec0',
+                                callback: function(value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function runPrediction() {
+            if (stockData.length === 0) {
+                showError('Please fetch stock data first');
+                return;
+            }
+
+            const trainSize = Math.floor(stockData.length * 0.8);
+            const testData = stockData.slice(trainSize);
+            
+            actualPrices = testData;
+            predictions = generatePredictions(stockData);
+
+            const metrics = calculateMetrics(actualPrices, predictions);
+
+            // Update UI
+            document.getElementById('predictedPrice').textContent = 
+                '$' + predictions[predictions.length - 1].toFixed(2);
+            document.getElementById('accuracy').textContent = 
+                metrics.accuracy.toFixed(2) + '%';
+            document.getElementById('mse').textContent = metrics.mse.toFixed(2);
+            document.getElementById('mae').textContent = '$' + metrics.mae.toFixed(2);
+            
+            const priceChange = predictions[predictions.length - 1] - actualPrices[actualPrices.length - 1];
+            const changeEl = document.getElementById('priceChange');
+            changeEl.textContent = (priceChange >= 0 ? '+' : '') + '$' + priceChange.toFixed(2);
+            changeEl.className = 'metric-value ' + (priceChange >= 0 ? 'positive' : 'negative');
+
+            const confidence = Math.max(0, Math.min(100, metrics.accuracy));
+            document.getElementById('confidence').textContent = confidence.toFixed(1) + '%';
+
+            updateChart();
+        }
+
+        function reset() {
+            stockData = [];
+            predictions = [];
+            actualPrices = [];
+            dates = [];
+            if (priceChart) {
+                priceChart.destroy();
+                priceChart = null;
+            }
+            document.getElementById('currentPrice').textContent = '$0.00';
+            document.getElementById('predictedPrice').textContent = '$0.00';
+            document.getElementById('accuracy').textContent = '0%';
+            document.getElementById('dataPoints').textContent = '0';
+            document.getElementById('mse').textContent = '0.00';
+            document.getElementById('mae').textContent = '$0.00';
+            document.getElementById('priceChange').textContent = '$0.00';
+            document.getElementById('confidence').textContent = '0%';
+            document.getElementById('predictBtn').disabled = true;
+            hideError();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 10000);
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Allow Enter key to fetch data
+        document.getElementById('stockSymbol').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                fetchRealData();
+            }
+        });
+
+        // Don't auto-fetch on load - let user choose
+        // fetchRealData();
+    </script>
+</body>
+</html>

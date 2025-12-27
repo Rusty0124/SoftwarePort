@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Collaborative Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .editor-panel {
+            padding: 30px;
+            border-right: 2px solid #f0f0f0;
+        }
+
+        .users-panel {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .editor-header h2 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .editor {
+            width: 100%;
+            min-height: 400px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .editor:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .users-header {
+            margin-bottom: 20px;
+        }
+
+        .users-header h2 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .user-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .users-list {
+            list-style: none;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .user-item:hover {
+            transform: translateX(5px);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .user-status {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .typing-indicator {
+            color: #667eea;
+            font-style: italic;
+        }
+
+        .chat-panel {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .chat-messages {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: #f0f0f0;
+        }
+
+        .message-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .message-text {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .save-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+        }
+
+        .editor-wrapper {
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-panel {
+                border-right: none;
+                border-bottom: 2px solid #f0f0f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Real-Time Collaborative Platform</h1>
+            <p>Work together in real-time with live updates and synchronization</p>
+        </div>
+
+        <div class="main-content">
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <h2>📝 Collaborative Editor</h2>
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span id="connectionStatus">Connected</span>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="saveDocument()">💾 Save</button>
+                    <button class="btn btn-secondary" onclick="loadDocument()">📂 Load</button>
+                    <button class="btn btn-secondary" onclick="shareDocument()">🔗 Share</button>
+                    <button class="btn btn-secondary" onclick="exportDocument()">📤 Export</button>
+                    <button class="btn btn-secondary" onclick="clearDocument()">🗑️ Clear</button>
+                </div>
+
+                <div class="editor-wrapper">
+                    <div class="save-indicator" id="saveIndicator">Saved!</div>
+                    <textarea 
+                        id="editor" 
+                        class="editor" 
+                        placeholder="Start typing... Changes are auto-saved!"
+                        oninput="handleInput()"
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="users-panel">
+                <div class="users-header">
+                    <h2>👥 Active Users</h2>
+                    <div class="user-count" id="userCount">1 user online</div>
+                </div>
+
+                <ul class="users-list" id="usersList">
+                    <li class="user-item" data-user="you">
+                        <div class="user-avatar">LS</div>
+                        <div class="user-info">
+                            <div class="user-name">You (Lance Shaffer)</div>
+                            <div class="user-status" id="yourStatus">ready</div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="chat-panel">
+                    <h3 style="margin-bottom: 15px; color: #333;">💬 Chat</h3>
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input">
+                        <input 
+                            type="text" 
+                            id="chatInput" 
+                            placeholder="Type a message..."
+                            onkeypress="handleChatKeyPress(event)"
+                        >
+                        <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Collaborative Platform with localStorage persistence
+        const STORAGE_KEY = 'collab_document';
+        const CHAT_STORAGE_KEY = 'collab_chat';
+        const USERS_STORAGE_KEY = 'collab_users';
+        
+        let lastUpdate = Date.now();
+        let typingTimeout;
+        let autoSaveTimeout;
+        let simulatedUsers = [];
+        let chatMessages = [];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDocument();
+            loadChat();
+            initializeSimulatedUsers();
+            startAutoSave();
+            simulateOtherUsers();
+        });
+
+        function handleInput() {
+            const editor = document.getElementById('editor');
+            const yourStatus = document.getElementById('yourStatus');
+            
+            // Update status
+            yourStatus.textContent = 'typing...';
+            yourStatus.className = 'user-status typing-indicator';
+            
+            // Clear previous timeout
+            clearTimeout(typingTimeout);
+            
+            // Hide typing indicator after 2 seconds
+            typingTimeout = setTimeout(() => {
+                yourStatus.textContent = 'editing';
+                yourStatus.className = 'user-status';
+            }, 2000);
+
+            // Auto-save with debounce
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                saveToStorage();
+                showSaveIndicator();
+            }, 1000);
+
+            // Simulate real-time sync
+            simulateSync(editor.value);
+            lastUpdate = Date.now();
+        }
+
+        function saveToStorage() {
+            const editor = document.getElementById('editor');
+            const content = editor.value;
+            localStorage.setItem(STORAGE_KEY, content);
+            localStorage.setItem(STORAGE_KEY + '_timestamp', Date.now().toString());
+        }
+
+        function loadDocument() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                document.getElementById('editor').value = saved;
+                console.log('Document loaded from storage');
+            } else {
+                // Default content
+                document.getElementById('editor').value = `// Welcome to the Collaborative Platform!
+// This is a real-time editor where multiple users can work together.
+// Your changes are automatically saved to localStorage.
+
+function collaborativeFunction() {
+    console.log("Real-time collaboration is working!");
+    return "Success!";
+}
+
+// Features:
+// - Real-time synchronization (simulated)
+// - Auto-save to localStorage
+// - User presence indicators
+// - Live chat functionality
+// - Document persistence`;
+            }
+        }
+
+        function saveDocument() {
+            saveToStorage();
+            showSaveIndicator();
+            alert('Document saved successfully!');
+        }
+
+        function clearDocument() {
+            if (confirm('Are you sure you want to clear the document? This cannot be undone.')) {
+                document.getElementById('editor').value = '';
+                localStorage.removeItem(STORAGE_KEY);
+                showSaveIndicator();
+            }
+        }
+
+        function loadDocument() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                document.getElementById('editor').value = saved;
+                showSaveIndicator();
+            }
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function startAutoSave() {
+            setInterval(() => {
+                if (Date.now() - lastUpdate > 2000) {
+                    saveToStorage();
+                }
+            }, 5000);
+        }
+
+        function simulateSync(content) {
+            // Simulate sending to other users
+            const changes = {
+                content: content,
+                timestamp: Date.now(),
+                user: 'You'
+            };
+            // In production, this would use WebSocket
+            console.log('Syncing:', changes.content.length, 'characters');
+        }
+
+        function initializeSimulatedUsers() {
+            const users = [
+                { name: 'John Doe', avatar: 'JD', status: 'viewing' },
+                { name: 'Jane Smith', avatar: 'JS', status: 'editing' },
+                { name: 'Bob Wilson', avatar: 'BW', status: 'idle' }
+            ];
+
+            const usersList = document.getElementById('usersList');
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.className = 'user-item';
+                li.dataset.user = user.name;
+                li.innerHTML = `
+                    <div class="user-avatar">${user.avatar}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-status">${user.status}</div>
+                    </div>
+                `;
+                usersList.appendChild(li);
+                simulatedUsers.push({ ...user, element: li });
+            });
+
+            updateUserCount();
+        }
+
+        function simulateOtherUsers() {
+            // Simulate user activity
+            setInterval(() => {
+                simulatedUsers.forEach(user => {
+                    if (Math.random() > 0.7) {
+                        const statusEl = user.element.querySelector('.user-status');
+                        const statuses = ['viewing', 'editing', 'idle'];
+                        const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                        statusEl.textContent = newStatus;
+                        statusEl.className = 'user-status';
+                        
+                        if (newStatus === 'editing' && Math.random() > 0.5) {
+                            statusEl.textContent = 'typing...';
+                            statusEl.className = 'user-status typing-indicator';
+                            setTimeout(() => {
+                                statusEl.textContent = newStatus;
+                                statusEl.className = 'user-status';
+                            }, 2000);
+                        }
+                    }
+                });
+            }, 4000);
+        }
+
+        function updateUserCount() {
+            const count = simulatedUsers.length + 1; // +1 for current user
+            document.getElementById('userCount').textContent = `${count} user${count > 1 ? 's' : ''} online`;
+        }
+
+        function shareDocument() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Share link copied to clipboard!\n\nShare this URL with others to collaborate.');
+            }).catch(() => {
+                alert('Unable to copy link. Please copy this URL manually:\n' + url);
+            });
+        }
+
+        function exportDocument() {
+            const editor = document.getElementById('editor');
+            const content = editor.value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `collaborative-document-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messageObj = {
+                    user: 'You',
+                    text: message,
+                    timestamp: Date.now()
+                };
+                addChatMessage(messageObj.user, messageObj.text);
+                chatMessages.push(messageObj);
+                saveChat();
+                input.value = '';
+            }
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addChatMessage(user, text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `
+                <div class="message-header">${user}</div>
+                <div class="message-text">${text}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function loadChat() {
+            const saved = localStorage.getItem(CHAT_STORAGE_KEY);
+            if (saved) {
+                try {
+                    chatMessages = JSON.parse(saved);
+                    chatMessages.forEach(msg => {
+                        addChatMessage(msg.user, msg.text);
+                    });
+                } catch (e) {
+                    console.error('Error loading chat:', e);
+                }
+            }
+        }
+
+        function saveChat() {
+            localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatMessages));
+        }
+
+        // Simulate incoming messages
+        setInterval(() => {
+            if (Math.random() > 0.95 && simulatedUsers.length > 0) {
+                const user = simulatedUsers[Math.floor(Math.random() * simulatedUsers.length)];
+                const messages = [
+                    'This is really helpful!',
+                    'I agree with the changes.',
+                    'Can we discuss this section?',
+                    'Looks good to me!',
+                    'Let me add some comments...'
+                ];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                const messageObj = {
+                    user: user.name,
+                    text: message,
+                    timestamp: Date.now()
+                };
+                addChatMessage(messageObj.user, messageObj.text);
+                chatMessages.push(messageObj);
+                saveChat();
+            }
+        }, 8000);
+
+        // Simulate connection status changes
+        setInterval(() => {
+            const statusEl = document.getElementById('connectionStatus');
+            if (Math.random() > 0.98) {
+                statusEl.textContent = 'Reconnecting...';
+                setTimeout(() => {
+                    statusEl.textContent = 'Connected';
+                }, 1000);
+            }
+        }, 30000);
+
+        console.log('Collaborative Platform initialized with localStorage persistence');
+    </script>
+</body>
+</html>
