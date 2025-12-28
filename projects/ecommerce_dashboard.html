@@ -4,20 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Commerce Dashboard</title>
+    <!-- Chart.js library for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* ============================================
+           RESET & BASE STYLES
+           ============================================ */
+        
+        /* Universal reset: removes default margins and padding, sets box-sizing */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Body styles: sets default font, background color, and text color */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f7fa;
             color: #333;
         }
 
+        /* ============================================
+           DASHBOARD LAYOUT
+           ============================================ */
+        
+        /* Main dashboard container: creates a two-column grid layout (sidebar + main content) */
         .dashboard {
             display: grid;
             grid-template-columns: 250px 1fr;
@@ -25,6 +37,7 @@
             box-sizing: border-box;
         }
 
+        /* Sidebar: fixed left navigation panel with gradient background */
         .sidebar {
             background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
             color: white;
@@ -35,6 +48,7 @@
             overflow-y: auto;
         }
 
+        /* Logo/brand name at top of sidebar */
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
@@ -43,6 +57,7 @@
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Navigation menu items in sidebar */
         .nav-item {
             padding: 15px;
             margin-bottom: 5px;
@@ -54,26 +69,35 @@
             gap: 10px;
         }
 
+        /* Navigation item hover and active states */
         .nav-item:hover, .nav-item.active {
             background: rgba(255, 255, 255, 0.1);
         }
 
+        /* Main content area: offset to account for fixed sidebar */
         .main-content {
             margin-left: 250px;
             padding: 30px;
             box-sizing: border-box;
         }
 
+        /* Section content: hidden by default, shown when active class is added */
         .section-content {
             display: none;
             box-sizing: border-box;
         }
 
+        /* Active section: displayed when this class is applied */
         .section-content.active {
             display: block;
             box-sizing: border-box;
         }
 
+        /* ============================================
+           HEADER & BUTTONS
+           ============================================ */
+        
+        /* Page header: contains title and action buttons */
         .header {
             display: flex;
             justify-content: space-between;
@@ -84,17 +108,20 @@
             box-sizing: border-box;
         }
 
+        /* Page title styling */
         .header h1 {
             font-size: 2rem;
             color: #2c3e50;
         }
 
+        /* Container for action buttons in header */
         .header-actions {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
         }
 
+        /* Base button styles */
         .btn {
             padding: 10px 20px;
             border: none;
@@ -105,38 +132,50 @@
             font-size: 14px;
         }
 
+        /* Primary button: purple gradient, used for main actions */
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
+        /* Primary button hover effect */
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
+        /* Secondary button: light grey, used for secondary actions */
         .btn-secondary {
             background: #f0f0f0;
             color: #333;
         }
 
+        /* Secondary button hover effect */
         .btn-secondary:hover {
             background: #e0e0e0;
         }
 
+        /* Danger button: red, used for destructive actions */
         .btn-danger {
             background: #e74c3c;
             color: white;
         }
 
+        /* Danger button hover effect */
         .btn-danger:hover {
             background: #c0392b;
         }
 
+        /* Hide file input (triggered by button click) */
         input[type="file"] {
             display: none;
         }
 
+        /* ============================================
+           STATISTICS CARDS
+           ============================================ */
+        
+        /* Grid container for stat cards: responsive grid that adjusts to screen size */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -145,10 +184,12 @@
             box-sizing: border-box;
         }
 
+        /* Settings section: limit width of stats grid */
         #settings-section .stats-grid {
             max-width: 600px;
         }
 
+        /* Individual stat card: displays a metric (e.g., revenue, orders) */
         .stat-card {
             background: white;
             padding: 25px;
@@ -158,10 +199,12 @@
             box-sizing: border-box;
         }
 
+        /* Stat card hover effect: lifts card slightly */
         .stat-card:hover {
             transform: translateY(-5px);
         }
 
+        /* Stat card header: contains title and icon */
         .stat-header {
             display: flex;
             justify-content: space-between;
@@ -169,16 +212,19 @@
             margin-bottom: 15px;
         }
 
+        /* Stat card title text */
         .stat-title {
             color: #7f8c8d;
             font-size: 0.9rem;
             font-weight: 600;
         }
 
+        /* Stat card icon (emoji) */
         .stat-icon {
             font-size: 2rem;
         }
 
+        /* Stat card value: the main number displayed */
         .stat-value {
             font-size: 2rem;
             font-weight: bold;
@@ -186,15 +232,22 @@
             margin-bottom: 5px;
         }
 
+        /* Stat change indicator: shows positive change (green) */
         .stat-change {
             font-size: 0.85rem;
             color: #27ae60;
         }
 
+        /* Stat change indicator: shows negative change (red) */
         .stat-change.negative {
             color: #e74c3c;
         }
 
+        /* ============================================
+           CHARTS
+           ============================================ */
+        
+        /* Grid container for charts: 2 columns (sales chart wider, products chart narrower) */
         .charts-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -203,6 +256,7 @@
             box-sizing: border-box;
         }
 
+        /* Chart card: container for a Chart.js visualization */
         .chart-card {
             background: white;
             padding: 25px;
@@ -211,36 +265,75 @@
             box-sizing: border-box;
         }
 
+        /* Chart card title */
         .chart-card h3 {
             margin-bottom: 20px;
             color: #2c3e50;
         }
 
+        /* ============================================
+           TABLES
+           ============================================ */
+        
+        /* Table section: container for data tables */
         .table-section {
             background: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
-            width: 400px;
         }
 
+        /* Dashboard section: Recent Orders table (7 columns) - wider for more data */
+        #dashboard-section .table-section {
+            width: 750px;
+            max-width: 1200px;
+        }
+
+        /* Products section: Products table (6 columns) - medium width */
+        #products-section .table-section {
+            width: 550px;
+            max-width: 900px;
+        }
+
+        /* Orders section: All Orders table (7 columns) - full width for complete list */
+        #orders-section .table-section {
+            width: 750px;
+            max-width: 1200px;
+        }
+
+        /* Customers section: Customers table (5 columns) - narrower for fewer columns */
+        #customers-section .table-section {
+            width: 550px;
+            max-width: 800px;
+        }
+
+        /* Settings section: Not a table, but uses table-section for consistency */
+        #settings-section .table-section {
+            width: 700px;
+            max-width: 700px;
+        }
+
+        /* Settings section content container */
         .settings-section-content {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+        /* Remove margin from first settings section */
         .settings-section-content:first-child {
             margin-bottom: 0;
         }
 
+        /* Divider between settings sections */
         .settings-section-divider {
             margin-top: 30px;
             padding-top: 30px;
             border-top: 1px solid #e9ecef;
         }
 
+        /* Settings section heading */
         .settings-heading {
             margin-bottom: 20px;
             margin-top: 0;
@@ -249,6 +342,7 @@
             font-weight: 600;
         }
 
+        /* Container for settings buttons */
         .settings-buttons {
             display: flex;
             flex-direction: column;
@@ -257,11 +351,13 @@
             box-sizing: border-box;
         }
 
+        /* Full-width buttons in settings */
         .settings-buttons .btn {
             width: 100%;
             box-sizing: border-box;
         }
 
+        /* Table header: contains title and action buttons */
         .table-header {
             display: flex;
             justify-content: space-between;
@@ -270,10 +366,12 @@
             box-sizing: border-box;
         }
 
+        /* Table header title */
         .table-header h3 {
             color: #2c3e50;
         }
 
+        /* Table: displays data in rows and columns */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -281,25 +379,34 @@
             table-layout: auto;
         }
 
+        /* Table header row: light grey background */
         thead {
             background: #f8f9fa;
         }
 
+        /* Table cells: padding and border styling */
         th, td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #e9ecef;
         }
 
+        /* Table header cells: bold text */
         th {
             font-weight: 600;
             color: #2c3e50;
         }
 
+        /* Table row hover effect: highlights row on hover */
         tr:hover {
             background: #f8f9fa;
         }
 
+        /* ============================================
+           BADGES & STATUS INDICATORS
+           ============================================ */
+        
+        /* Base badge style: pill-shaped status indicators */
         .badge {
             padding: 5px 12px;
             border-radius: 20px;
@@ -307,26 +414,35 @@
             font-weight: 600;
         }
 
+        /* Success badge: green, for completed/positive status */
         .badge-success {
             background: #d4edda;
             color: #155724;
         }
 
+        /* Warning badge: yellow, for pending/processing status */
         .badge-warning {
             background: #fff3cd;
             color: #856404;
         }
 
+        /* Danger badge: red, for cancelled/error status */
         .badge-danger {
             background: #f8d7da;
             color: #721c24;
         }
 
+        /* ============================================
+           ACTION BUTTONS
+           ============================================ */
+        
+        /* Container for action buttons in table rows */
         .action-buttons {
             display: flex;
             gap: 5px;
         }
 
+        /* Small action button (edit, delete icons) */
         .action-btn {
             padding: 5px 10px;
             border: none;
@@ -335,6 +451,11 @@
             font-size: 0.8rem;
         }
 
+        /* ============================================
+           MODAL DIALOG
+           ============================================ */
+        
+        /* Modal overlay: dark background overlay, hidden by default */
         .modal {
             display: none;
             position: fixed;
@@ -346,12 +467,14 @@
             background-color: rgba(0, 0, 0, 0.5);
         }
 
+        /* Modal visible state: shows modal and centers content */
         .modal.show {
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
+        /* Modal content box: white card containing form */
         .modal-content {
             background: white;
             padding: 30px;
@@ -362,6 +485,7 @@
             overflow-y: auto;
         }
 
+        /* Modal header: contains title and close button */
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -369,24 +493,33 @@
             margin-bottom: 20px;
         }
 
+        /* Modal title */
         .modal-header h2 {
             color: #2c3e50;
         }
 
+        /* Close button (X) */
         .close {
             font-size: 2rem;
             cursor: pointer;
             color: #999;
         }
 
+        /* Close button hover effect */
         .close:hover {
             color: #333;
         }
 
+        /* ============================================
+           FORMS
+           ============================================ */
+        
+        /* Form group: container for label and input */
         .form-group {
             margin-bottom: 20px;
         }
 
+        /* Form label */
         .form-group label {
             display: block;
             margin-bottom: 5px;
@@ -394,6 +527,7 @@
             font-weight: 600;
         }
 
+        /* Form inputs and selects */
         .form-group input,
         .form-group select {
             width: 100%;
@@ -403,12 +537,18 @@
             font-size: 14px;
         }
 
+        /* Form input focus state: purple border */
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
             border-color: #667eea;
         }
 
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        
+        /* Mobile styles: stack sidebar and main content vertically */
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -431,9 +571,14 @@
     </style>
 </head>
 <body>
+    <!-- ============================================
+         MAIN DASHBOARD LAYOUT
+         ============================================ -->
     <div class="dashboard">
+        <!-- Sidebar Navigation: Fixed left panel with menu items -->
         <div class="sidebar">
             <div class="logo">🛍️ E-Commerce</div>
+            <!-- Navigation menu items: clicking switches between sections -->
             <div class="nav-item active" onclick="showSection('dashboard')">
                 <span>📊</span>
                 <span>Dashboard</span>
@@ -460,8 +605,12 @@
             </div>
         </div>
 
+        <!-- Main Content Area: Contains all dashboard sections -->
         <div class="main-content">
-            <!-- Dashboard Section -->
+            <!-- ============================================
+                 DASHBOARD SECTION
+                 Main overview with stats, charts, and recent orders
+                 ============================================ -->
             <div id="dashboard-section" class="section-content active">
                 <div class="header">
                     <h1>Dashboard</h1>
@@ -546,7 +695,10 @@
             </div>
             </div>
 
-            <!-- Products Section -->
+            <!-- ============================================
+                 PRODUCTS SECTION
+                 Displays product inventory (currently placeholder)
+                 ============================================ -->
             <div id="products-section" class="section-content">
                 <div class="header">
                     <h1>Products</h1>
@@ -573,7 +725,10 @@
                 </div>
             </div>
 
-            <!-- Orders Section (same as dashboard orders) -->
+            <!-- ============================================
+                 ORDERS SECTION
+                 Complete list of all orders with full CRUD operations
+                 ============================================ -->
             <div id="orders-section" class="section-content">
                 <div class="header">
                     <h1>Orders</h1>
@@ -601,7 +756,10 @@
                 </div>
             </div>
 
-            <!-- Customers Section -->
+            <!-- ============================================
+                 CUSTOMERS SECTION
+                 Customer analytics: total orders, spending, averages
+                 ============================================ -->
             <div id="customers-section" class="section-content">
                 <div class="header">
                     <h1>Customers</h1>
@@ -623,7 +781,10 @@
                 </div>
             </div>
 
-            <!-- Analytics Section -->
+            <!-- ============================================
+                 ANALYTICS SECTION
+                 Data visualizations: sales trends and product performance
+                 ============================================ -->
             <div id="analytics-section" class="section-content">
                 <div class="header">
                     <h1>Analytics</h1>
@@ -640,7 +801,10 @@
                 </div>
             </div>
 
-            <!-- Settings Section -->
+            <!-- ============================================
+                 SETTINGS SECTION
+                 Data management and statistics overview
+                 ============================================ -->
             <div id="settings-section" class="section-content">
                 <div class="header">
                     <h1>Settings</h1>
@@ -678,7 +842,10 @@
         </div>
     </div>
 
-    <!-- Add/Edit Order Modal -->
+    <!-- ============================================
+         ORDER MODAL DIALOG
+         Popup form for adding/editing orders
+         ============================================ -->
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -721,23 +888,37 @@
     </div>
 
     <script>
-        // Data storage
+        /* ============================================
+           DATA MANAGEMENT
+           ============================================ */
+        
+        // Array to store all orders in memory
         let orders = [];
+        // Key for localStorage to persist data
         const STORAGE_KEY = 'ecommerce_orders';
 
-        // Initialize
+        /* ============================================
+           INITIALIZATION
+           ============================================ */
+        
+        // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            loadOrders();
-            updateDashboard();
-            initializeCharts();
+            loadOrders();          // Load orders from localStorage
+            updateDashboard();     // Render all dashboard components
+            initializeCharts();    // Set up Chart.js visualizations
         });
 
+        /* ============================================
+           DATA PERSISTENCE
+           ============================================ */
+        
+        // Load orders from localStorage or use sample data if none exists
         function loadOrders() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 orders = JSON.parse(saved);
             } else {
-                // Sample data
+                // Sample data: initial orders for demonstration
                 orders = [
                     { id: 1, customer: 'John Doe', product: 'Wireless Headphones', amount: 89.99, status: 'Completed', date: '2024-01-15' },
                     { id: 2, customer: 'Jane Smith', product: 'Smart Watch', amount: 249.99, status: 'Processing', date: '2024-01-15' },
@@ -748,26 +929,34 @@
             }
         }
 
+        // Save orders array to localStorage
         function saveOrders() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
         }
 
+        // Update all dashboard components with current data
         function updateDashboard() {
-            renderOrders();
-            updateStats();
-            updateCharts();
-            renderCustomers();
+            renderOrders();        // Refresh order tables
+            updateStats();         // Update stat cards
+            updateCharts();        // Update chart visualizations
+            renderCustomers();     // Refresh customer table
         }
 
+        /* ============================================
+           ORDER RENDERING
+           ============================================ */
+        
+        // Render orders in both dashboard and orders section tables
         function renderOrders() {
-            const tbody = document.getElementById('ordersTable');
-            const tbodyFull = document.getElementById('ordersTableFull');
+            const tbody = document.getElementById('ordersTable');        // Dashboard table (limited)
+            const tbodyFull = document.getElementById('ordersTableFull'); // Orders section table (all)
             if (tbody) tbody.innerHTML = '';
             if (tbodyFull) tbodyFull.innerHTML = '';
 
+            // Sort orders by date (newest first)
             const sortedOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // Render limited orders for dashboard
+            // Render limited orders for dashboard (first 20)
             if (tbody) {
                 sortedOrders.slice(0, 20).forEach(order => {
                     renderOrderRow(order, tbody);
@@ -782,8 +971,10 @@
             }
         }
 
+        // Render a single order row in the table
         function renderOrderRow(order, tbody) {
             const row = document.createElement('tr');
+            // Map order status to badge CSS class
             const statusClass = {
                 'Completed': 'badge-success',
                 'Processing': 'badge-warning',
@@ -791,6 +982,7 @@
                 'Cancelled': 'badge-danger'
             }[order.status] || 'badge-warning';
 
+            // Build HTML for order row
             row.innerHTML = `
                 <td>#${order.id}</td>
                 <td>${order.customer}</td>
@@ -808,14 +1000,21 @@
             tbody.appendChild(row);
         }
         
+        /* ============================================
+           CUSTOMER RENDERING
+           ============================================ */
+        
+        // Render customer statistics table (aggregated from orders)
         function renderCustomers() {
             const tbody = document.getElementById('customersTable');
             if (!tbody) return;
             
             tbody.innerHTML = '';
             
+            // Calculate statistics for each customer
             const customerStats = {};
             orders.forEach(order => {
+                // Initialize customer stats if first time seeing this customer
                 if (!customerStats[order.customer]) {
                     customerStats[order.customer] = {
                         name: order.customer,
@@ -824,13 +1023,16 @@
                         lastOrder: order.date
                     };
                 }
+                // Accumulate stats
                 customerStats[order.customer].totalOrders++;
                 customerStats[order.customer].totalSpent += order.amount;
+                // Update last order date if this order is newer
                 if (new Date(order.date) > new Date(customerStats[order.customer].lastOrder)) {
                     customerStats[order.customer].lastOrder = order.date;
                 }
             });
             
+            // Sort by total spent (highest first) and render rows
             Object.values(customerStats).sort((a, b) => b.totalSpent - a.totalSpent).forEach(customer => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -844,6 +1046,11 @@
             });
         }
         
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        
+        // Switch between dashboard sections (Dashboard, Orders, Customers, etc.)
         function showSection(sectionName) {
             // Hide all sections
             document.querySelectorAll('.section-content').forEach(section => {
@@ -864,7 +1071,7 @@
             // Add active class to clicked nav item
             event.target.closest('.nav-item').classList.add('active');
             
-            // Update section-specific content
+            // Update section-specific content when switching
             if (sectionName === 'orders') {
                 renderOrders();
             } else if (sectionName === 'customers') {
@@ -876,13 +1083,14 @@
             }
         }
         
+        // Render analytics section charts (with delay to ensure canvas is visible)
         function renderAnalytics() {
-            // Re-render charts in analytics section
             setTimeout(() => {
                 updateCharts();
             }, 100);
         }
         
+        // Update statistics in settings section
         function updateSettingsStats() {
             const totalOrders = orders.length;
             const totalRevenue = orders.reduce((sum, o) => sum + o.amount, 0);
@@ -894,10 +1102,20 @@
             if (settingsRevenueEl) settingsRevenueEl.textContent = '$' + totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
         
+        /* ============================================
+           PRODUCT MANAGEMENT
+           ============================================ */
+        
+        // Add product (placeholder - feature coming soon)
         function addProduct() {
             alert('Product management feature coming soon! Products can be added automatically from orders.');
         }
         
+        /* ============================================
+           DATA MANAGEMENT
+           ============================================ */
+        
+        // Clear all orders from storage and reset dashboard
         function clearAllData() {
             if (confirm('Are you sure you want to clear ALL data? This cannot be undone!')) {
                 orders = [];
@@ -907,31 +1125,44 @@
             }
         }
 
+        /* ============================================
+           STATISTICS
+           ============================================ */
+        
+        // Update stat cards with calculated metrics
         function updateStats() {
             const totalRevenue = orders.reduce((sum, o) => sum + o.amount, 0);
             const totalOrders = orders.length;
             const uniqueCustomers = new Set(orders.map(o => o.customer)).size;
             const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
+            // Update DOM elements with formatted values
             document.getElementById('revenue').textContent = '$' + totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             document.getElementById('orders').textContent = totalOrders.toLocaleString();
             document.getElementById('customers').textContent = uniqueCustomers.toLocaleString();
             document.getElementById('avgOrder').textContent = '$' + avgOrder.toFixed(2);
         }
 
+        /* ============================================
+           CHARTS (Chart.js)
+           ============================================ */
+        
+        // Chart instances (destroyed and recreated on updates)
         let salesChart = null;
         let productsChart = null;
 
+        // Initialize charts on page load
         function initializeCharts() {
             updateCharts();
         }
 
+        // Update or create Chart.js visualizations
         function updateCharts() {
-            // Sales Chart
+            // Sales Chart: Line chart showing monthly revenue
             const salesCtx = document.getElementById('salesChart').getContext('2d');
-            if (salesChart) salesChart.destroy();
+            if (salesChart) salesChart.destroy(); // Destroy existing chart to prevent duplicates
 
-            const monthlySales = getMonthlySales();
+            const monthlySales = getMonthlySales(); // Get aggregated monthly data
             salesChart = new Chart(salesCtx, {
                 type: 'line',
                 data: {
@@ -957,11 +1188,11 @@
                 }
             });
 
-            // Products Chart
+            // Products Chart: Doughnut chart showing top 5 products by revenue
             const productsCtx = document.getElementById('productsChart').getContext('2d');
-            if (productsChart) productsChart.destroy();
+            if (productsChart) productsChart.destroy(); // Destroy existing chart to prevent duplicates
 
-            const productData = getProductData();
+            const productData = getProductData(); // Get top 5 products by revenue
             productsChart = new Chart(productsCtx, {
                 type: 'doughnut',
                 data: {
@@ -987,40 +1218,51 @@
             });
         }
 
+        // Aggregate order amounts by month (0-11 for Jan-Dec)
         function getMonthlySales() {
             const monthly = new Array(12).fill(0);
             orders.forEach(order => {
                 const date = new Date(order.date);
-                const month = date.getMonth();
+                const month = date.getMonth(); // 0 = January, 11 = December
                 monthly[month] += order.amount;
             });
             return monthly;
         }
 
+        // Get top 5 products by total revenue
         function getProductData() {
             const productMap = {};
+            // Sum revenue for each product
             orders.forEach(order => {
                 productMap[order.product] = (productMap[order.product] || 0) + order.amount;
             });
+            // Sort by revenue (descending) and take top 5
             const sorted = Object.entries(productMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
             return {
-                labels: sorted.map(([name]) => name),
-                values: sorted.map(([, value]) => value)
+                labels: sorted.map(([name]) => name),      // Product names
+                values: sorted.map(([, value]) => value)   // Revenue amounts
             };
         }
 
+        /* ============================================
+           ORDER MANAGEMENT
+           ============================================ */
+        
+        // Open modal to add a new order
         function addOrder() {
             document.getElementById('modalTitle').textContent = 'Add New Order';
             document.getElementById('orderForm').reset();
-            document.getElementById('orderId').value = '';
-            document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('orderId').value = ''; // Empty = new order
+            document.getElementById('orderDate').value = new Date().toISOString().split('T')[0]; // Today's date
             document.getElementById('orderModal').classList.add('show');
         }
 
+        // Open modal to edit an existing order
         function editOrder(id) {
             const order = orders.find(o => o.id === id);
             if (!order) return;
 
+            // Populate form with existing order data
             document.getElementById('modalTitle').textContent = 'Edit Order';
             document.getElementById('orderId').value = order.id;
             document.getElementById('customerName').value = order.customer;
@@ -1031,19 +1273,23 @@
             document.getElementById('orderModal').classList.add('show');
         }
 
+        // Delete an order after confirmation
         function deleteOrder(id) {
             if (confirm('Are you sure you want to delete this order?')) {
-                orders = orders.filter(o => o.id !== id);
+                orders = orders.filter(o => o.id !== id); // Remove order from array
                 saveOrders();
                 updateDashboard();
             }
         }
 
+        // Save order (create new or update existing)
         function saveOrder(e) {
             e.preventDefault();
             const id = document.getElementById('orderId').value;
+            
+            // Build order object from form data
             const order = {
-                id: id ? parseInt(id) : Math.max(...orders.map(o => o.id), 0) + 1,
+                id: id ? parseInt(id) : Math.max(...orders.map(o => o.id), 0) + 1, // New ID if creating
                 customer: document.getElementById('customerName').value,
                 product: document.getElementById('productName').value,
                 amount: parseFloat(document.getElementById('amount').value),
@@ -1051,11 +1297,12 @@
                 date: document.getElementById('orderDate').value
             };
 
+            // Update existing order or add new one
             if (id) {
                 const index = orders.findIndex(o => o.id === parseInt(id));
-                if (index !== -1) orders[index] = order;
+                if (index !== -1) orders[index] = order; // Update
             } else {
-                orders.push(order);
+                orders.push(order); // Add new
             }
 
             saveOrders();
@@ -1063,10 +1310,16 @@
             closeModal();
         }
 
+        // Close the modal dialog
         function closeModal() {
             document.getElementById('orderModal').classList.remove('show');
         }
 
+        /* ============================================
+           DATA IMPORT/EXPORT
+           ============================================ */
+        
+        // Import orders from JSON or CSV file
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1074,6 +1327,7 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
+                    // Handle JSON file import
                     if (file.name.endsWith('.json')) {
                         const data = JSON.parse(e.target.result);
                         if (Array.isArray(data)) {
@@ -1083,7 +1337,9 @@
                         } else {
                             throw new Error('Invalid JSON format');
                         }
-                    } else if (file.name.endsWith('.csv')) {
+                    } 
+                    // Handle CSV file import
+                    else if (file.name.endsWith('.csv')) {
                         const lines = e.target.result.split('\n');
                         const headers = lines[0].split(',').map(h => h.trim());
                         orders = [];
@@ -1125,23 +1381,29 @@
             event.target.value = '';
         }
 
+        // Export all orders to JSON file download
         function exportData() {
-            const dataStr = JSON.stringify(orders, null, 2);
+            const dataStr = JSON.stringify(orders, null, 2); // Pretty-print JSON
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `ecommerce-orders-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `ecommerce-orders-${new Date().toISOString().split('T')[0]}.json`; // Filename with date
             a.click();
-            URL.revokeObjectURL(url);
+            URL.revokeObjectURL(url); // Clean up
         }
 
+        // Refresh dashboard (re-render all components)
         function refreshDashboard() {
             updateDashboard();
             alert('Dashboard refreshed!');
         }
 
-        // Close modal on outside click
+        /* ============================================
+           EVENT LISTENERS
+           ============================================ */
+        
+        // Close modal when clicking outside of it
         window.onclick = (event) => {
             const modal = document.getElementById('orderModal');
             if (event.target === modal) {
